@@ -51,6 +51,31 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
 - [Node.js](https://nodejs.org/en/) (v18.x atau lebih baru)
 - `npm` atau `yarn`
 
+### 🔧 Konfigurasi Firebase
+
+Proyek ini memerlukan Firebase sebagai backend. Ikuti langkah-langkah ini untuk menyiapkan dan mendapatkan kredensial yang diperlukan.
+
+1.  **Buat Proyek di Firebase:**
+    - Kunjungi Firebase Console.
+    - Klik "**Add project**" dan ikuti petunjuk untuk membuat proyek baru (Anda bisa menonaktifkan Google Analytics jika tidak dibutuhkan untuk awal).
+
+2.  **Buat Aplikasi Web:**
+    - Di dasbor proyek Anda, klik ikon Web (`</>`) untuk menambahkan aplikasi web baru.
+    - Beri nama aplikasi Anda (misal: "waras-dashboard") dan klik "**Register app**".
+    - Firebase akan menampilkan objek `firebaseConfig`. **Salin semua nilai di dalamnya**, karena akan digunakan pada langkah selanjutnya.
+
+3.  **Aktifkan Layanan yang Dibutuhkan:**
+    - **Authentication:**
+        - Dari menu samping, buka `Build > Authentication`.
+        - Klik "**Get started**".
+        - Di tab "**Sign-in method**", aktifkan provider **Email/Password** dan **Google**.
+    - **Realtime Database:**
+        - Dari menu samping, buka `Build > Realtime Database`.
+        - Klik "**Create Database**".
+        - Pilih lokasi server (misalnya, `asia-southeast1`).
+        - Pilih untuk memulai dalam **Test mode**. Ini akan mengizinkan akses baca/tulis tanpa aturan kompleks, cocok untuk development.
+        > **Penting:** Untuk produksi, Anda harus memperketat Aturan Keamanan Anda.
+
 ### Instalasi
 
 1.  **Clone repository ini:**
@@ -67,11 +92,11 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
     ```
 
 3.  **Konfigurasi Environment Variables:**
-    Buat file `.env.local` di root direktori proyek dengan menyalin dari `.env.local.example`.
+    Salin file contoh `.env.local.example` menjadi file baru bernama `.env.local`.
     ```sh
     cp .env.local.example .env.local
     ```
-    Kemudian, isi semua variabel di dalam file `.env.local` dengan kredensial dari proyek Firebase Anda.
+    Kemudian, isi semua variabel di dalam file `.env.local` dengan kredensial yang Anda dapatkan dari **Langkah 2 Konfigurasi Firebase**.
 
     ```plaintext
     # Firebase Configuration
