@@ -32,3 +32,6 @@ functions/.env # If you have a separate .env for functions
 # Other common ignores
 coverage/
 .turbo/ # If using Turborepo (optional, if you use it)
+
+# Test folder for Jest/Vitest
+test/

@@ -9,14 +9,6 @@
   Sebuah dashboard web modern untuk memonitor dan mengontrol kualitas air secara <em>real-time</em>, dirancang khusus untuk sistem akuakultur cerdas.
 </p>
 
-<p align="center">
-    <a href="#fitur-utama">Fitur Utama</a> •
-    <a href="#teknologi-yang-digunakan">Teknologi</a> •
-    <a href="#memulai">Memulai</a> •
-    <a href="#struktur-proyek">Struktur Proyek</a> •
-    <a href="#lisensi">Lisensi</a>
-</p>
-
 ---
 
 ## 📖 Tentang Proyek
@@ -27,20 +19,20 @@ Tidak hanya memonitor, sistem ini juga dilengkapi dengan fitur kontrol aktuator 
 
 ## ✨ Fitur Utama
 
-- 📊 **Dasbor Real-time:** Pantau parameter vital dengan update langsung dari perangkat keras (ESP32) melalui Firebase Realtime Database.
-- 📈 **Visualisasi Data Historis:** Analisis tren data dengan grafik interaktif yang mendukung fitur *zoom* dan *brushing* untuk rentang waktu tertentu.
-- 🤖 **Analisis Prediktif AI:** Manfaatkan model regresi linear sederhana untuk memprediksi kondisi air di masa depan dan mengantisipasi potensi masalah.
-- 🕹️ **Kontrol Aktuator Jarak Jauh:** Kendalikan perangkat seperti Penebar Pakan (*Feeder*) dan Pelontar Pakan secara manual dari mana saja.
-- 🛡️ **Manajemen Akses Berbasis Peran:**
+- **Dasbor Real-time:** Pantau parameter vital dengan update langsung dari perangkat keras (ESP32) melalui Firebase Realtime Database.
+- **Visualisasi Data Historis:** Analisis tren data dengan grafik interaktif yang mendukung fitur *zoom* dan *brushing* untuk rentang waktu tertentu.
+- **Analisis Prediktif AI:** Manfaatkan model regresi linear sederhana untuk memprediksi kondisi air di masa depan dan mengantisipasi potensi masalah.
+- **Kontrol Aktuator Jarak Jauh:** Kendalikan perangkat seperti Penebar Pakan (*Feeder*) dan Pelontar Pakan secara manual dari mana saja.
+- **Manajemen Akses Berbasis Peran:**
   - **Master:** Akses tanpa batas untuk mengontrol semua aktuator.
   - **Publik:** Akses terbatas untuk mencegah spam dan menjaga keawetan perangkat keras.
-- ⏳ **Rate Limiting:** Pengguna publik dibatasi hanya dapat mengirim 2 perintah kontrol setiap 2 jam untuk menjaga stabilitas sistem.
-- 📄 **Ekspor Data:** Unduh data historis dalam format **CSV** atau **XML** untuk analisis offline atau keperluan laporan.
-- 🔐 **Autentikasi Aman:** Sistem login yang mendukung Email/Password dan integrasi dengan Google Sign-In.
-- 🌓 **Mode Terang & Gelap:** Tampilan antarmuka yang nyaman dan dapat disesuaikan dengan preferensi pengguna.
-- 📱 **Desain Responsif:** Akses dashboard dengan optimal dari perangkat desktop maupun mobile.
+- **Rate Limiting:** Pengguna publik dibatasi hanya dapat mengirim 2 perintah kontrol setiap 2 jam untuk menjaga stabilitas sistem.
+- **Ekspor Data:** Unduh data historis dalam format **CSV** atau **XML** untuk analisis offline atau keperluan laporan.
+- **Autentikasi Aman:** Sistem login yang mendukung Email/Password dan integrasi dengan Google Sign-In.
+- **Mode Terang & Gelap:** Tampilan antarmuka yang nyaman dan dapat disesuaikan dengan preferensi pengguna.
+- **Desain Responsif:** Akses dashboard dengan optimal dari perangkat desktop maupun mobile.
 
-## 🚀 Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 | Kategori | Teknologi |
 | :--- | :--- |
