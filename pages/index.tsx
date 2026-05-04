@@ -6,7 +6,8 @@ import ChartCard from '@/components/ChartCard';
 import ControlPanel from '@/components/ControlPanel';
 import StatusBadge from '@/components/StatusBadge';
 import PredictiveChartCard from '@/components/PredictiveChartCard';
-import FuzzyChart from '@/components/FuzzyChart'; // 👈 Tambahan Import Fuzzy
+// 👇 FIX: Mengubah nama import menjadi FuzzyLogCard 👇
+import FuzzyLogCard from '@/components/FuzzyLogCard'; 
 import UserProfileModal from '@/components/UserProfileModal'; 
 import ThemeToggle from '@/components/ThemeToggle';
 import ActivityLogCard from '@/components/ActivityLogCard';
@@ -202,8 +203,8 @@ export default function Dashboard() {
               />
               <PredictiveChartCard data={historyData} isLoading={historyLoading} />
               
-              {/* 👇 GRAFIK FUZZY LOGIC TAMPIL DI SINI 👇 */}
-              <FuzzyChart data={historyData} />
+              {/* 👇 KOMPONEN LOG FUZZY TAMPIL DI SINI 👇 */}
+              <FuzzyLogCard data={historyData} />
             </div>
 
           </div>
