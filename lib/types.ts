@@ -3,8 +3,9 @@ export interface SensorData {
   do: number;
   temperature: number;
   timestamp: number;
+  fuzzy_rate?: number;
+  fuzzy_interval?: number;
 }
-
 
 export type ControlMode = 'auto' | 'manual' | 'otomatis';
 
@@ -23,6 +24,8 @@ export interface HistoricalDataPoint {
   ph: number;
   do: number;
   temperature: number;
+  fuzzy_rate?: number;
+  fuzzy_interval?: number;
 }
 
 export interface IoTData {
@@ -33,4 +36,3 @@ export interface IoTData {
   control: SystemControl;
   lastUpdated: number;
 }
-
