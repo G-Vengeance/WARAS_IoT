@@ -76,7 +76,8 @@ export function useHistoricalData(limitCount: number = 50) {
 export const MASTER_EMAILS = [
   "pratamagerrio@gmail.com",
   "warasiottrilogi@gmail.com",
-  "anandatrihandayani13@gmail.com" // <-- Email master baru ditambahkan di sini
+  "anandatrihandayani13@gmail.com",
+  "ketutbayu@trilogi.ac.id" // <-- Email master baru ditambahkan di sini
 ];
 
 /**
