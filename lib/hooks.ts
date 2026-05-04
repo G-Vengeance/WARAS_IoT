@@ -4,7 +4,7 @@ import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { database } from './firebase'; 
 import { SensorData, SystemControl, HistoricalDataPoint, ControlMode, ActuatorState } from './types';
 import { logEvent } from 'firebase/analytics';
-import { analytics, auth as firebaseAuth } from './firebase'; // Import auth juga
+import { analytics, auth as firebaseAuth } from './firebase'; 
 
 /**
  * Hook Sensor Data
@@ -73,9 +73,10 @@ export function useHistoricalData(limitCount: number = 50) {
 }
 
 // 👇 DAFTAR EMAIL MASTER (Admin yang Bebas Kuota) 👇
-const MASTER_EMAILS = [
+export const MASTER_EMAILS = [
   "pratamagerrio@gmail.com",
-  "warasiottrilogi@gmail.com"
+  "warasiottrilogi@gmail.com",
+  "anandatrihandayani13@gmail.com" // <-- Email master baru ditambahkan di sini
 ];
 
 /**
@@ -161,27 +162,33 @@ export function useSystemControl() {
     // 3. JIKA BUKAN MASTER, CEK KUOTA (RATE LIMIT: 2x per 2 Jam)
     if (!isMaster) {
       setUpdating(true);
-      const limitRef = ref(database, `rate_limit/${user.uid}`);
-      const snapshot = await get(limitRef);
-      const now = Date.now();
-      const twoHoursAgo = now - (2 * 60 * 60 * 1000); // Waktu 2 jam yang lalu dalam milidetik
+      try {
+        const limitRef = ref(database, `rate_limit/${user.uid}`);
+        const snapshot = await get(limitRef);
+        const now = Date.now();
+        const twoHoursAgo = now - (2 * 60 * 60 * 1000); // Waktu 2 jam yang lalu dalam milidetik
 
-      let validClicks: number[] = [];
-      if (snapshot.exists()) {
-        const clicks = snapshot.val() as number[];
-        // Buang riwayat klik yang sudah lebih dari 2 jam
-        validClicks = clicks.filter(time => time > twoHoursAgo);
-      }
+        let validClicks: number[] = [];
+        if (snapshot.exists()) {
+          const clicks = snapshot.val() as number[];
+          validClicks = clicks.filter(time => time > twoHoursAgo);
+        }
 
-      // Jika dalam 2 jam terakhir sudah klik 2 kali atau lebih, Blokir!
-      if (validClicks.length >= 2) {
+        if (validClicks.length >= 2) {
+          setUpdating(false);
+          return { success: false, message: "⏳ Kuota Habis! Anda hanya diizinkan mengontrol 2 kali per 2 jam." };
+        }
+
+        validClicks.push(now);
+        await set(limitRef, validClicks);
+      } catch (error: any) {
         setUpdating(false);
-        return { success: false, message: "⏳ Kuota Habis! Anda hanya diizinkan mengontrol 2 kali per 2 jam." };
+        console.error("Gagal memeriksa atau mengatur rate limit:", error);
+        if (error.message && error.message.includes('Permission denied')) {
+          return { success: false, message: "Akses kuota ditolak. Periksa Aturan Keamanan di Firebase." };
+        }
+        return { success: false, message: "Gagal memeriksa kuota penggunaan." };
       }
-
-      // Jika kuota masih ada, catat waktu klik saat ini ke Firebase
-      validClicks.push(now);
-      await set(limitRef, validClicks);
     }
 
     // 4. EKSEKUSI PERINTAH KE HARDWARE (JIKA LOLOS CEKALAN)

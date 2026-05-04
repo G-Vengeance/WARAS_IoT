@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Settings, Zap, Radio, ShieldAlert, ShieldCheck, X, Info } from 'lucide-react';
 import { ControlMode, ActuatorState } from '@/lib/types';
-import { useAuth } from '@/lib/hooks';
+import { useAuth, MASTER_EMAILS } from '@/lib/hooks';
 import AuthModal from './AuthModal';
 
 interface ControlPanelProps {
@@ -11,11 +11,6 @@ interface ControlPanelProps {
   onActuatorToggle: (actuator: keyof ActuatorState) => Promise<{success: boolean, message?: string}> | void;
   disabled?: boolean;
 }
-
-const MASTER_EMAILS = [
-  "pratamagerrio@gmail.com",
-  "warasiottrilogi@gmail.com"
-];
 
 export default function ControlPanel({
   mode,
@@ -140,8 +135,8 @@ export default function ControlPanel({
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full shadow-sm transition-colors ${actuators.feeder ? 'bg-emerald-500 animate-pulse-slow' : 'bg-gray-300 dark:bg-slate-600'}`} />
               <div>
-                <p className="font-bold text-gray-900 dark:text-white transition-colors">Feeder</p>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors">Pakan turun</p>
+                <p className="font-bold text-gray-900 dark:text-white transition-colors">Pelontar</p>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors">Tembak pakan</p>
               </div>
             </div>
             <button
@@ -157,8 +152,8 @@ export default function ControlPanel({
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full shadow-sm transition-colors ${actuators.pelontar ? 'bg-emerald-500 animate-pulse-slow' : 'bg-gray-300 dark:bg-slate-600'}`} />
               <div>
-                <p className="font-bold text-gray-900 dark:text-white transition-colors">Pelontar</p>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors">Tembak pakan</p>
+                <p className="font-bold text-gray-900 dark:text-white transition-colors">Feeder</p>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors">Pakan turun</p>
               </div>
             </div>
             <button
