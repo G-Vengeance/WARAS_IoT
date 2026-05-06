@@ -59,13 +59,13 @@ export default function ControlPanel({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-gray-900 dark:text-white transition-colors" />
-            <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">Panel Kontrol</h3>
+            <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight transition-colors">Control Panel</h3>
           </div>
           
           {user && (
             <button 
               onClick={() => setIsRoleInfoOpen(true)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-extrabold uppercase tracking-wide shadow-sm transition-all hover:scale-105 active:scale-95
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-extrabold uppercase tracking-wide shadow-sm transition-all hover:scale-105 active:scale-95 /* Efek hover & klik */
                 ${isMaster 
                   ? 'bg-amber-100/50 border-amber-200 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-400' 
                   : 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300'
@@ -74,7 +74,7 @@ export default function ControlPanel({
               title="Klik untuk melihat penjelasan role"
             >
               {isMaster ? <ShieldCheck className="w-3.5 h-3.5" /> : <ShieldAlert className="w-3.5 h-3.5" />}
-              {isMaster ? 'Master' : 'Publik'}
+              {isMaster ? 'Master' : 'Public'}
               <Info className="w-3 h-3 ml-0.5 opacity-70" />
             </button>
           )}
@@ -152,7 +152,7 @@ export default function ControlPanel({
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full shadow-sm transition-colors ${actuators.pelontar ? 'bg-emerald-500 animate-pulse-slow' : 'bg-gray-300 dark:bg-slate-600'}`} />
               <div>
-                <p className="font-bold text-gray-900 dark:text-white transition-colors">Pelontar</p>
+                <p className="font-bold text-gray-900 dark:text-white transition-colors">Spreader</p>
                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors">Tembak pakan</p>
               </div>
             </div>
@@ -200,29 +200,29 @@ export default function ControlPanel({
 
             <div className="p-6">
               <h2 className="text-xl font-extrabold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
-                <Info className="w-5 h-5 text-indigo-500" />
-                Tingkat Akses
+                <Info className="w-5 h-5 text-indigo-500" /> {/* Ikon informasi */}
+                Access Levels
               </h2>
               
               <div className="space-y-5">
                 
                 {/* 👇 Penjelasan INI HANYA MUNCUL kalau yang login adalah MASTER 👇 */}
                 {isMaster && (
-                  <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-xl">
+                  <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-xl"> {/* Styling untuk Master */}
                     <h3 className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold mb-2">
                       <ShieldCheck className="w-4 h-4" /> Master
                     </h3>
                     <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                      Anda memiliki akses eksklusif tingkat tinggi. Anda dapat mengontrol semua aktuator (Feeder & Pelontar) tanpa ada batasan waktu atau kuota jumlah klik (Unlimited).
+                      Anda memiliki akses eksklusif tingkat tinggi. Anda dapat mengontrol semua aktuator (Feeder & Spreader) tanpa ada batasan waktu atau kuota jumlah klik (Unlimited).
                     </p>
                   </div>
                 )}
 
                 {/* 👇 Penjelasan INI HANYA MUNCUL kalau yang login adalah PUBLIK 👇 */}
                 {!isMaster && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700 rounded-xl">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700 rounded-xl"> {/* Styling untuk Publik */}
                     <h3 className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold mb-2">
-                      <ShieldAlert className="w-4 h-4" /> Operator Publik
+                      <ShieldAlert className="w-4 h-4" /> Public Operator
                     </h3>
                     <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
                       Demi menjaga keawetan dan mencegah kerusakan hardware akibat <i>spam</i> klik, pengguna publik dibatasi hanya dapat mengirim <b>MAKSIMAL 2 PERINTAH KONTROL SETIAP 2 JAM</b>.

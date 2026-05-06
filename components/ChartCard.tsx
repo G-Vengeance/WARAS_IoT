@@ -68,15 +68,15 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
   const formatXAxis = (timestamp: number) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
-    const dayMonth = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
-    const time = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const dayMonth = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    const time = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
     return `${dayMonth}, ${time}`;
   };
 
   const formatYAxis = (value: number) => {
     const titleLower = title.toLowerCase();
     if (titleLower.includes("suhu") || titleLower.includes("temp")) {
-      return value.toFixed(1).replace('.', ',') + ' °C';
+      return value.toFixed(1) + ' °C';
     }
     return value.toString(); 
   };
@@ -91,9 +91,9 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
   };
 
   const handleExportHarian = async (format: 'csv' | 'xml') => {
-    if (!selectedDate) return alert("Pilih tanggal terlebih dahulu!");
+    if (!selectedDate) return alert("Please select a date first!");
     
-    setIsExporting(true);
+    setIsExporting(true); // Mengatur status loading untuk tombol export
     
     const targetMonthFolder = selectedDate.substring(0, 7);
     const db = getDatabase();
@@ -121,7 +121,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
           alert(`Tidak ada data sensor yang terekam pada tanggal ${selectedDate}`);
         }
       } else {
-        alert(`Data kosong untuk bulan ${targetMonthFolder}`);
+        alert(`Tidak ada data untuk bulan ${targetMonthFolder}`);
       }
     } catch (error) {
       console.error("Gagal mengambil data harian:", error);
@@ -132,7 +132,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
   };
 
   const generateCSV = (dataArray: any[], dateString: string) => {
-    const headers = ['Timestamp', 'Waktu Lengkap', ...dataKeys.map(k => k.name)].join(',');
+    const headers = ['Timestamp', 'Full Time', ...dataKeys.map(k => k.name)].join(',');
     const csvRows = dataArray.map(row => {
       const dateStr = new Date(row.timestamp).toISOString().replace(/T|Z/g, ' ');
       const values = dataKeys.map(k => row[k.key] !== undefined ? row[k.key] : 0);
@@ -150,7 +150,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     dataArray.forEach(row => {
       xml += '  <Record>\n';
       xml += `    <Timestamp>${row.timestamp}</Timestamp>\n`;
-      xml += `    <Waktu>${new Date(row.timestamp).toISOString().replace(/T|Z/g, ' ')}</Waktu>\n`;
+      xml += `    <Time>${new Date(row.timestamp).toISOString().replace(/T|Z/g, ' ')}</Time>\n`;
       dataKeys.forEach(k => {
         xml += `    <${k.key}>${row[k.key] !== undefined ? row[k.key] : 0}</${k.key}>\n`;
       });
@@ -178,7 +178,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
       return (
         <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-4 rounded-xl shadow-2xl border border-gray-300/80 dark:border-slate-500/80 z-50 transition-all duration-300">
           <p className="text-[11px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-3 tracking-wider">
-            {new Date(pointData.timestamp).toLocaleString('id-ID', {
+            {new Date(pointData.timestamp).toLocaleString('en-GB', {
               day: '2-digit', month: 'long', year: 'numeric',
               hour: '2-digit', minute: '2-digit', second: '2-digit'
             })}
@@ -188,7 +188,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
             let unit = "";
             const nameLower = entry.name.toLowerCase();
             if (nameLower.includes("suhu") || nameLower.includes("temp")) {
-              formattedValue = entry.value.toFixed(1).replace('.', ','); 
+              formattedValue = entry.value.toFixed(1); 
               unit = " °C";
             }
             return (
@@ -227,7 +227,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               className="text-xs font-semibold px-2 py-1.5 border rounded-lg bg-white/50 dark:bg-slate-700 dark:text-white dark:border-slate-600 outline-none focus:ring-2 focus:ring-blue-500"
-              title="Pilih Tanggal Export"
+              title="Select Export Date"
             />
             {/* 👇 Ubah onClick menjadi handleProtectedExport 👇 */}
             <button 
@@ -260,7 +260,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
           </div>
         ) : data.length === 0 ? (
             <div className="h-80 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-slate-600">
-              <div className="animate-bounce mb-3 text-3xl">📊</div>
+              <div className="animate-bounce mb-3 text-3xl">📊</div> {/* Ikon animasi */}
               <p className="text-sm font-medium">Belum ada data historis yang terekam.</p>
             </div>
         ) : (

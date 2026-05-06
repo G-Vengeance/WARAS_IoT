@@ -25,7 +25,7 @@ export interface HistoricalDataPoint {
   do: number;
   temperature: number;
   fuzzy_rate?: number;
-  fuzzy_interval?: number;
+  durasi_buka?: number; 
 }
 
 export interface IoTData {

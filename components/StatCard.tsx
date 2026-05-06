@@ -67,10 +67,10 @@ export default function StatCard({
     if (Math.abs(diff) >= 0.01) {
       if (diff > 0) {
         setTrend('up');
-        setTrendText(`Naik ${diff.toFixed(2).replace('.', ',')} ${unit}`);
+        setTrendText(`Naik ${diff.toFixed(2)} ${unit}`);
       } else {
         setTrend('down');
-        setTrendText(`Turun ${Math.abs(diff).toFixed(2).replace('.', ',')} ${unit}`);
+        setTrendText(`Turun ${Math.abs(diff).toFixed(2)} ${unit}`);
       }
       lastMeaningfulValue.current = currentValue;
     } 
@@ -80,7 +80,7 @@ export default function StatCard({
   let displayValue = value;
   if (typeof value === 'number') {
     if (unit.includes('°C')) {
-      displayValue = value.toFixed(1).replace('.', ','); // Khusus Suhu: 36,5
+      displayValue = value.toFixed(1); // For Temperature: 36.5
     } else {
       displayValue = value.toFixed(2); // Untuk DO dan pH: 7.50
     }

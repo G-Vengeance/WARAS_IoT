@@ -16,9 +16,9 @@ export default function StatusBadge({ isConnected, lastUpdate }: StatusBadgeProp
       hour: '2-digit', 
       minute: '2-digit', 
       hour12: false 
-    }).replace('.', ':'); 
+    }); 
     
-    return `${waktu}`;
+    return `${waktu} WIB`;
   };
 
   return (
@@ -30,12 +30,12 @@ export default function StatusBadge({ isConnected, lastUpdate }: StatusBadgeProp
       }
     `}>
       {isConnected ? (
-        <>
+        <> {/* Jika terhubung */}
           <Wifi className="w-4 h-4" />
           <span className="hidden sm:inline">Terhubung</span>
         </>
       ) : (
-        <>
+        <> {/* Jika terputus */}
           <WifiOff className="w-4 h-4" />
           <span className="hidden sm:inline">Terputus</span>
         </>

@@ -10,14 +10,12 @@ import PredictiveChartCard from '@/components/PredictiveChartCard';
 import FuzzyLogCard from '@/components/FuzzyLogCard'; 
 import UserProfileModal from '@/components/UserProfileModal'; 
 import ThemeToggle from '@/components/ThemeToggle';
-import ActivityLogCard from '@/components/ActivityLogCard';
 import {
   useSensorData,
   useHistoricalData,
   useSystemControl,
   useConnectionStatus,
-  useAuth, 
-  useActivityLog
+  useAuth
 } from '@/lib/hooks';
 
 export default function Dashboard() {
@@ -40,16 +38,16 @@ export default function Dashboard() {
 
   const formatLastUpdate = (timestamp: number) => {
     const date = new Date(timestamp);
-    const tgl = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-    const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('.', ':');
-    return `${tgl} - ${jam}`;
+    const tgl = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return `${tgl} - ${jam} WIB`;
   };
 
   return (
     <>
       <Head>
-        <title>WARAS - Dashboard IoT Monitoring</title>
-        <meta name="description" content="Sistem monitoring IoT untuk kualitas air berbasis ESP32" />
+        <title>WARAS - IoT Monitoring Dashboard</title>
+        <meta name="description" content="IoT monitoring system for water quality based on ESP32" />
         <link rel="icon" href="/logo-dark2.png" />
       </Head>
 
@@ -117,7 +115,7 @@ export default function Dashboard() {
           {/* Error Message */}
           {error && (
             <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4 shadow-sm">
-              <p className="text-red-800 dark:text-red-300 text-sm font-bold">
+              <p className="text-red-800 dark:text-red-300 text-sm font-bold"> {/* Pesan error */}
                 Error: <span className="font-medium">{error}</span>
               </p>
             </div>
@@ -127,32 +125,32 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <div className="col-span-2 lg:col-span-1">
               <StatCard
-                title="pH Level"
+                title="pH Level" /* Judul StatCard pH */
                 value={sensorData?.ph ?? 0}
                 unit="pH"
                 icon={Droplets}
                 color="blue"
                 minSafe={6.5} 
                 maxSafe={8.5} 
-                subtitle="Ideal: 6.5 - 8.5 pH"
+                subtitle="Ideal: 6.5 - 8.5"
                 animationDelay={100}
               />
             </div>
             <div className="col-span-1">
               <StatCard
-                title="Dissolved Oxygen"
+                title="Dissolved Oxygen" /* Judul StatCard DO */
                 value={sensorData?.do ?? 0}
                 unit="mg/L"
                 icon={Wind}
                 color="green"
                 minSafe={4.0} 
-                subtitle="Minimal: 4.0 mg/L"
+                subtitle="Minimum: 4.0 mg/L"
                 animationDelay={200}
               />
             </div>
             <div className="col-span-1">
               <StatCard
-                title="Temperature"
+                title="Temperature" /* Judul StatCard Suhu */
                 value={sensorData?.temperature ?? 0}
                 unit="°C"
                 icon={Thermometer}
@@ -180,12 +178,14 @@ export default function Dashboard() {
                   />
                 )}
               </div>
-              <ActivityLogCard />
+
+              {/* 👇 KOMPONEN LOG FUZZY DIPINDAHKAN KE SINI 👇 */}
+              <FuzzyLogCard data={historyData} />
             </div>
 
             <div className="order-last lg:order-first lg:col-span-2 space-y-4 sm:space-y-6">
               <ChartCard
-                title="Grafik pH & DO"
+                title="pH & DO Chart" /* Judul Chart pH & DO */
                 data={historyData}
                 isLoading={historyLoading}
                 dataKeys={[
@@ -194,17 +194,14 @@ export default function Dashboard() {
                 ]}
               />
               <ChartCard
-                title="Grafik Suhu"
+                title="Temperature Chart" /* Judul Chart Suhu */
                 data={historyData}
                 isLoading={historyLoading}
                 dataKeys={[
-                  { key: 'temperature', name: 'Suhu (°C)', color: '#f59e0b' },
+                  { key: 'temperature', name: 'Temp (°C)', color: '#f59e0b' },
                 ]}
               />
               <PredictiveChartCard data={historyData} isLoading={historyLoading} />
-              
-              {/* 👇 KOMPONEN LOG FUZZY TAMPIL DI SINI 👇 */}
-              <FuzzyLogCard data={historyData} />
             </div>
 
           </div>
@@ -212,18 +209,18 @@ export default function Dashboard() {
           {/* 👇 JURUS 3: FOOTER RAPAT & PADAT DI HP 👇 */}
           <div className="bg-gradient-to-br from-indigo-50/50 to-white dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg border border-indigo-100 dark:border-indigo-900/50 p-4 sm:p-6 transition-all duration-300">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 text-center">
-              <div className="col-span-1 md:col-span-1">
-                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">Total Data Points</p>
+              <div className="col-span-1 md:col-span-1"> {/* Total Data Points */}
+                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">Total Data Points</p> 
                 <p className="text-lg sm:text-2xl font-extrabold text-gray-900 dark:text-white mt-0.5">{historyData.length}</p>
               </div>
-              <div className="col-span-1 md:col-span-1 border-l border-gray-200 dark:border-gray-700">
-                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">System Status</p>
+              <div className="col-span-1 md:col-span-1 border-l border-gray-200 dark:border-gray-700"> {/* Status Sistem */}
+                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">System Status</p> 
                 <p className="text-lg sm:text-2xl font-extrabold text-gray-900 dark:text-white mt-0.5">
                   {isConnected ? '🟢 ONLINE' : '🔴 OFFLINE'}
                 </p>
               </div>
-              <div className="col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-3 md:pt-0 mt-1 md:mt-0">
-                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">Last Update</p>
+              <div className="col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-3 md:pt-0 mt-1 md:mt-0"> {/* Pembaruan Terakhir */}
+                <p className="text-[10px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">Last Update</p> 
                 <p className="text-sm sm:text-xl font-extrabold text-gray-900 dark:text-white mt-0.5">
                   {isMounted && sensorData?.timestamp ? formatLastUpdate(sensorData.timestamp) : '-'}
                 </p>

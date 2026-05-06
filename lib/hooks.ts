@@ -81,30 +81,6 @@ export const MASTER_EMAILS = [
 ];
 
 /**
- * Interface untuk entri Log Aktivitas
- */
-export interface ActivityLogEntry {
-  timestamp: number;
-  userEmail: string | null;
-  action: string;
-  details?: string;
-}
-
-/**
- * Fungsi untuk mencatat aktivitas ke Firebase Realtime Database
- */
-async function logActivity(action: string, details?: string) {
-  const user = firebaseAuth.currentUser;
-  const logRef = ref(database, 'activity_log');
-  await push(logRef, {
-    timestamp: Date.now(),
-    userEmail: user ? user.email : 'Guest',
-    action,
-    details,
-  });
-}
-
-/**
  * Hook System Control - DENGAN FITUR ROLE & RATE LIMIT 🛡️
  */
 export function useSystemControl() {
@@ -134,9 +110,6 @@ export function useSystemControl() {
     setUpdating(true);
     try {
       await update(ref(database, 'control'), { mode }); // Update mode di Firebase
-      
-      // Catat aktivitas ke log
-      await logActivity(`Mode operasi diubah menjadi ${mode}`);
 
       if (analytics) {
         logEvent(analytics, 'mode_changed', { new_mode: mode }); // Log ke Analytics
@@ -199,9 +172,6 @@ export function useSystemControl() {
         const newState = !control.actuators[actuator];
         await set(ref(database, `control/actuators/${actuator}`), newState);
 
-        // Catat aktivitas ke log
-        await logActivity(`${actuator} diubah menjadi ${newState ? 'ON' : 'OFF'}`);
-        
         // 👇 FIX: FIREBASE ANALYTICS DITANAM DI SINI 👇
         if (analytics) {
           logEvent(analytics, 'actuator_used', {
@@ -214,45 +184,16 @@ export function useSystemControl() {
         
         return { success: true };
       } catch (err) {
-        console.error('Gagal update aktuator:', err);
-        return { success: false, message: "Gagal menyambung ke server database." };
+        console.error('Failed to update actuator:', err);
+        return { success: false, message: "Failed to connect to the database." };
       } finally {
         setUpdating(false);
       }
     }
-    return { success: false, message: "Sistem belum siap." };
+    return { success: false, message: "System is not ready." };
   };
 
   return { control, loading, updating, updateMode, toggleActuator };
-}
-
-/**
- * Hook Activity Log - Mengambil log aktivitas terbaru
- */
-export function useActivityLog(limitCount: number = 10) {
-  const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const logRef = query(
-      ref(database, 'activity_log'),
-      limitToLast(limitCount) // Ambil N entri log terbaru
-    );
-
-    const unsubscribe = onValue(logRef, (snapshot) => {
-      setLoading(false);
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        const dataArray: ActivityLogEntry[] = Object.values(data);
-        setActivityLog(dataArray.sort((a, b) => b.timestamp - a.timestamp)); // Urutkan dari terbaru
-      } else {
-        setActivityLog([]);
-      }
-    });
-    return () => unsubscribe();
-  }, [limitCount]);
-
-  return { activityLog, loading };
 }
 
 /**

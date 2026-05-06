@@ -41,10 +41,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       }
       onSuccess(); // Tutup modal kalau sukses
     } catch (err: any) {
-      if (err.message.includes('auth/invalid-credential')) setError('Email atau password salah.');
-      else if (err.message.includes('auth/email-already-in-use')) setError('Email sudah terdaftar.');
-      else if (err.message.includes('auth/weak-password')) setError('Password minimal 6 karakter.');
-      else setError(err.message || 'Terjadi kesalahan sistem.');
+      if (err.message.includes('auth/invalid-credential')) setError('Incorrect email or password.');
+      else if (err.message.includes('auth/email-already-in-use')) setError('Email is already in use.');
+      else if (err.message.includes('auth/weak-password')) setError('Password must be at least 6 characters.');
+      else setError(err.message || 'A system error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -61,9 +61,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       onSuccess(); // Langsung masuk/daftar tanpa ba-bi-bu
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {
-        setError('Login Google dibatalkan.');
+        setError('Google sign-in was canceled.');
       } else {
-        setError(err.message || 'Gagal masuk menggunakan Google.');
+        setError(err.message || 'Failed to sign in with Google.');
       }
     } finally {
       setIsLoading(false);
@@ -83,12 +83,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
         <div className="p-8">
           <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">
-            {isLoginMode ? 'Akses Kontrol' : 'Daftar Akun Baru'}
+            {isLoginMode ? 'Access Control' : 'Create New Account'}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium">
             {isLoginMode 
-              ? 'Silakan masuk untuk mengambil alih kendali sistem WARAS.' 
-              : 'Daftarkan akun untuk memonitor dan mengontrol sistem.'}
+              ? 'Please sign in to take control of the WARAS system.' 
+              : 'Register an account to monitor and control the system.'}
           </p>
 
           {error && (
@@ -119,7 +119,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                placeholder="Minimal 6 karakter"
+                placeholder="At least 6 characters"
               />
             </div>
 
@@ -128,14 +128,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               disabled={isLoading}
               className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-70 mt-2"
             >
-              {isLoading ? 'Memproses...' : (isLoginMode ? 'MASUK' : 'BUAT AKUN')}
+              {isLoading ? 'Processing...' : (isLoginMode ? 'SIGN IN' : 'CREATE ACCOUNT')}
             </button>
           </form>
 
           {/* Pemisah Garis (ATAU) */}
           <div className="mt-6 flex items-center justify-center space-x-4">
             <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
-            <span className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">ATAU</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">OR</span>
             <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
           </div>
 
@@ -152,12 +152,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
-            Lanjutkan dengan Google
+            Continue with Google
           </button>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-              {isLoginMode ? "Belum punya akun? " : "Sudah punya akun? "}
+              {isLoginMode ? "Don't have an account? " : "Already have an account? "}
               <button 
                 onClick={() => {
                   setIsLoginMode(!isLoginMode);
@@ -165,7 +165,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 }}
                 className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
               >
-                {isLoginMode ? 'Daftar di sini' : 'Masuk di sini'}
+                {isLoginMode ? 'Register here' : 'Sign in here'}
               </button>
             </p>
           </div>

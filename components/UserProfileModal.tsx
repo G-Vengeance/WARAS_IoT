@@ -53,7 +53,7 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
         } catch (pwErr: any) {
           // 👇 Kalau Firebase minta re-auth, kita hiraukan error-nya agar UX tetap elegan 👇
           if (pwErr.code === 'auth/requires-recent-login') {
-            console.warn("Ganti password butuh re-auth. Dihiraukan sesuai instruksi Tuan Muda.");
+            console.warn("Perubahan password membutuhkan re-autentikasi. Aksi ini ditunda untuk pengalaman pengguna yang lebih baik.");
           } else {
             throw pwErr; // Lempar error lain jika ada
           }
@@ -94,7 +94,7 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
       await signOut(auth);
       onClose(); 
     } catch (error) {
-      console.error("Gagal Logout:", error);
+      console.error("Logout Failed:", error);
       setMessage({ type: 'error', text: 'Terjadi kesalahan saat mencoba keluar.' });
       setShowMessage(true);
     }
@@ -109,8 +109,8 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
         </button>
 
         <div className="p-8">
-          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-6">
-            Profil Operator
+          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-6"> {/* Judul modal */}
+            Operator Profile
           </h2>
 
           {/* 👇 NOTIFIKASI DENGAN TRANSISI HALUS (SLIDE & FADE) 👇 */}
@@ -137,25 +137,25 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
                 className="w-24 h-24 rounded-full shadow-md border-4 border-indigo-100 dark:border-slate-600 bg-indigo-50 dark:bg-slate-700 p-2 mb-4 object-contain"
               />
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                {user.displayName || 'Operator WARAS'}
+                {user.displayName || 'Operator WARAS'} {/* Nama pengguna atau default */}
               </h3>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8">
                 {user.email}
               </p>
 
               <div className="flex w-full gap-3">
-                <button 
+                <button /* Tombol Edit Profil */
                   onClick={() => setIsEditing(true)}
                   className="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-2"
                 >
-                  <UserIcon className="w-5 h-5" /> Edit Profil
+                  <UserIcon className="w-5 h-5" /> Edit Profile
                 </button>
                 
                 <button 
-                  onClick={handleLogout}
+                  onClick={handleLogout} /* Tombol Logout */
                   className="flex-1 py-3 px-4 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/40 dark:text-red-400 font-bold rounded-lg shadow-sm border border-red-100 dark:border-red-900/50 transition-all flex items-center justify-center gap-2"
                 >
-                  <LogOut className="w-5 h-5" /> Keluar Akun
+                  <LogOut className="w-5 h-5" /> Log Out
                 </button>
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
             <form onSubmit={handleSave} className="space-y-4">
               
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Pilih Avatar</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Pilih Avatar</label> {/* Label pilih avatar */}
                 <div className="grid grid-cols-3 gap-3">
                   {PREDEFINED_AVATARS.map((avatar, idx) => (
                     <div 
@@ -183,18 +183,18 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wide">Nama Operator</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wide">Nama Operator</label> {/* Label nama operator */}
                 <input 
                   type="text" 
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                  placeholder="Masukkan nama anda"
+                  placeholder="Masukkan nama Anda"
                 />
               </div>
 
               <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
-                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wide">Ganti Password</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wide">Ganti Password</label> {/* Label ganti password */}
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                   <input 

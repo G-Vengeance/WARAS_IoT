@@ -6,7 +6,6 @@ import { useSensorData, useSystemControl, useHistoricalData, useConnectionStatus
 import StatCard from '@/components/StatCard';
 import StatusBadge from '@/components/StatusBadge';
 import ControlPanel from '@/components/ControlPanel';
-import ActivityLogCard from '@/components/ActivityLogCard';
 import { Thermometer, Droplet, Wind } from 'lucide-react';
 
 // --- DYNAMIC IMPORT UNTUK SEMUA CHART ---
@@ -43,7 +42,7 @@ export default function DashboardPage() {
             Dashboard WARAS
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Sistem Analisis Kualitas Air Real-time
+            Real-time Water Quality Analysis System
           </p>
         </div>
         <StatusBadge isConnected={isConnected} lastUpdate={lastUpdate} />
@@ -57,7 +56,7 @@ export default function DashboardPage() {
           {/* Kartu Statistik */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
-              title="Suhu Air"
+              title="Water Temperature"
               value={isLoading ? '...' : sensorData?.temperature?.toFixed(1) || 0}
               unit="°C"
               icon={Thermometer}
@@ -75,7 +74,7 @@ export default function DashboardPage() {
               maxSafe={8.5}
             />
             <StatCard
-              title="Oksigen Terlarut"
+              title="Dissolved Oxygen"
               value={isLoading ? '...' : sensorData?.do?.toFixed(2) || 0}
               unit="mg/L"
               icon={Wind}
@@ -98,7 +97,6 @@ export default function DashboardPage() {
               disabled={updating || !isConnected}
             />
           )}
-          <ActivityLogCard />
         </div>
       </div>
     </main>

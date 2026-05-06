@@ -12,8 +12,8 @@ interface PredictiveChartProps {
 
 export default function PredictiveChartCard({ data, isLoading }: PredictiveChartProps) {
   // Slider Controls
-  const [analyzePoints, setAnalyzePoints] = useState(20); // Default baca 20 data ke belakang
-  const [predictMinutes, setPredictMinutes] = useState(60); // Default tebak 60 menit ke depan
+  const [analyzePoints, setAnalyzePoints] = useState(20); 
+  const [predictMinutes, setPredictMinutes] = useState(60); 
 
   // Jalankan rumus hanya saat data atau slider berubah
   const chartData = useMemo(() => {
@@ -23,7 +23,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
 
   const formatXAxis = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
   // Tooltip Glassmorphism yang Tuan Muda suka
@@ -42,13 +42,13 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
           }}
         >
           <p className="text-[11px] font-extrabold text-slate-500 dark:text-slate-300 uppercase mb-3 tracking-widest border-b border-slate-300/50 pb-2 flex items-center justify-between">
-            {new Date(pointData.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
-            {pointData.isPrediction && <span className="text-red-500 ml-3 bg-red-100 px-2 py-0.5 rounded-full text-[9px]">PREDIKSI</span>}
+            {new Date(pointData.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+            {pointData.isPrediction && <span className="text-red-500 ml-3 bg-red-100 px-2 py-0.5 rounded-full text-[9px]">PREDICTION</span>}
           </p>
           
           {/* Tampilkan pH */}
           {(pointData.ph_actual || pointData.ph_predicted) && (
-             <div className="flex items-center gap-3 mb-2">
+             <div className="flex items-center gap-3 mb-2"> {/* Tampilan pH */}
                 <div className="w-3 h-3 rounded-full bg-blue-500 shadow-md border border-white/50" />
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                   pH: <span className="text-black dark:text-white text-base ml-1">{(pointData.ph_actual || pointData.ph_predicted).toFixed(2)}</span>
@@ -58,7 +58,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
           
           {/* Tampilkan DO */}
           {(pointData.do_actual || pointData.do_predicted) && (
-             <div className="flex items-center gap-3 mb-2">
+             <div className="flex items-center gap-3 mb-2"> {/* Tampilan DO */}
                 <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-md border border-white/50" />
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                   DO: <span className="text-black dark:text-white text-base ml-1">{(pointData.do_actual || pointData.do_predicted).toFixed(2)} mg/L</span>
@@ -84,7 +84,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
 
         {/* Panel Kendali Slider */}
         <div className="flex flex-col sm:flex-row gap-6 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col"> {/* Slider untuk menganalisis data masa lalu */}
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
               Analisis Data Lalu: <span className="text-indigo-600">{analyzePoints} Titik</span>
             </label>
@@ -94,7 +94,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
               className="accent-indigo-600 w-32"
             />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col"> {/* Slider untuk memprediksi masa depan */}
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
               Prediksi Masa Depan: <span className="text-emerald-600">{predictMinutes} Menit</span>
             </label>
@@ -132,12 +132,12 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
               <ReferenceLine y={4.0} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'Batas Kritis DO (4.0)', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
 
               {/* Garis Masa Lalu (Solid) */}
-              <Line type="monotone" name="pH Historis" dataKey="ph_actual" stroke="#3b82f6" strokeWidth={3} dot={false} />
-              <Line type="monotone" name="DO Historis" dataKey="do_actual" stroke="#10b981" strokeWidth={3} dot={false} />
+              <Line type="monotone" name="Historical pH" dataKey="ph_actual" stroke="#3b82f6" strokeWidth={3} dot={false} /> {/* pH aktual */}
+              <Line type="monotone" name="Historical DO" dataKey="do_actual" stroke="#10b981" strokeWidth={3} dot={false} /> {/* DO aktual */}
 
               {/* Garis Masa Depan (Dashed / Putus-putus) */}
-              <Line type="monotone" name="Prediksi pH" dataKey="ph_predicted" stroke="#3b82f6" strokeWidth={3} strokeDasharray="6 6" dot={false} />
-              <Line type="monotone" name="Prediksi DO" dataKey="do_predicted" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false} />
+              <Line type="monotone" name="Predicted pH" dataKey="ph_predicted" stroke="#3b82f6" strokeWidth={3} strokeDasharray="6 6" dot={false} /> {/* pH prediksi */}
+              <Line type="monotone" name="Predicted DO" dataKey="do_predicted" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false} /> {/* DO prediksi */}
             </LineChart>
           </ResponsiveContainer>
         </div>

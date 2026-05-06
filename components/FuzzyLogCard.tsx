@@ -9,7 +9,7 @@ interface FuzzyLogCardProps {
 export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
   // Ambil 5 data history terakhir yang memiliki nilai fuzzy, lalu balik urutannya (terbaru di atas)
   const fuzzyLogs = data
-    .filter(item => item.fuzzy_rate !== undefined && item.fuzzy_interval !== undefined)
+    .filter(item => item.fuzzy_rate !== undefined && item.durasi_buka !== undefined)
     .slice(-5)
     .reverse();
 
@@ -20,19 +20,19 @@ export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
           <BrainCircuit className="w-5 h-5 text-purple-600 dark:text-purple-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Log Keputusan Fuzzy</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Riwayat prediksi porsi & jeda pakan otomatis</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Fuzzy LA Decision Log</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400"></p>
         </div>
       </div>
 
       <div className="space-y-3">
         {fuzzyLogs.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
-            Belum ada data Fuzzy yang terekam dari alat...
+            No fuzzy decision data recorded yet...
           </p>
         ) : (
           fuzzyLogs.map((log, index) => {
-            const time = new Date(log.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const time = new Date(log.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             return (
               <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-gray-100 dark:border-slate-600 transition-all hover:shadow-md">
                 <div className="flex items-center gap-3">
@@ -40,18 +40,18 @@ export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
                     <Clock className="w-4 h-4 text-purple-700 dark:text-purple-300" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{time} WIB</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                      pH: {log.ph} | DO: {log.do} | Suhu: {log.temperature}°C
+                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{time}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400"> {/* Detail sensor */}
+                      pH: {log.ph} | DO: {log.do} | Temp: {log.temperature}°C
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
-                    Rate: {log.fuzzy_rate?.toFixed(1)}%
+                    Rate: {log.fuzzy_rate?.toFixed(1)}% {/* Fuzzy Rate */}
                   </p>
                   <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                    Jeda: {log.fuzzy_interval?.toFixed(1)} Jam
+                    Katup: {log.durasi_buka} ms {/* Fuzzy Interval */}
                   </p>
                 </div>
               </div>
