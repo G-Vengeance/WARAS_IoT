@@ -1,3 +1,12 @@
+/*
+ * Project: WARAS_IoT
+ * Author: Gerrio Irfan Pratama (2026)
+ * 
+ * This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 
+ * International License (CC BY-NC 4.0).
+ * strictly NON-COMMERCIAL USE ONLY. 
+ * See the LICENSE file in the repository for full details.
+ */
 import React from 'react';
 import { HistoricalDataPoint } from '@/lib/types';
 import { BrainCircuit, Clock } from 'lucide-react';
@@ -7,10 +16,13 @@ interface FuzzyLogCardProps {
 }
 
 export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
-  // Ambil 5 data history terakhir yang memiliki nilai fuzzy, lalu balik urutannya (terbaru di atas)
+  // Memproses data historis untuk mendapatkan log keputusan fuzzy.
   const fuzzyLogs = data
+    // 1. Filter data untuk hanya menyertakan entri yang memiliki output dari logika fuzzy.
     .filter(item => item.fuzzy_rate !== undefined && item.durasi_buka !== undefined)
+    // 2. Ambil 5 entri terakhir dari hasil filter.
     .slice(-5)
+    // 3. Balik urutan array agar entri terbaru muncul di paling atas.
     .reverse();
 
   return (
@@ -26,12 +38,15 @@ export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
       </div>
 
       <div className="space-y-3">
+        {/* Jika tidak ada log fuzzy, tampilkan pesan placeholder. */}
         {fuzzyLogs.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
             No fuzzy decision data recorded yet...
           </p>
         ) : (
+          // Jika ada log, render setiap entri log.
           fuzzyLogs.map((log, index) => {
+            // Format timestamp menjadi string waktu yang mudah dibaca.
             const time = new Date(log.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             return (
               <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-gray-100 dark:border-slate-600 transition-all hover:shadow-md">
@@ -41,17 +56,17 @@ export default function FuzzyLogCard({ data }: FuzzyLogCardProps) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{time}</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400"> {/* Detail sensor */}
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       pH: {log.ph} | DO: {log.do} | Temp: {log.temperature}°C
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
-                    Rate: {log.fuzzy_rate?.toFixed(1)}% {/* Fuzzy Rate */}
+                    Rate: {log.fuzzy_rate?.toFixed(1)}%
                   </p>
                   <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                    Katup: {log.durasi_buka} ms {/* Fuzzy Interval */}
+                    Katup: {log.durasi_buka} ms
                   </p>
                 </div>
               </div>

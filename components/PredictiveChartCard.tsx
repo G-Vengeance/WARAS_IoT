@@ -1,3 +1,12 @@
+/*
+ * Project: WARAS_IoT
+ * Author: Gerrio Irfan Pratama (2026)
+ * 
+ * This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 
+ * International License (CC BY-NC 4.0).
+ * strictly NON-COMMERCIAL USE ONLY. 
+ * See the LICENSE file in the repository for full details.
+ */
 import React, { useState, useMemo } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine
@@ -11,22 +20,26 @@ interface PredictiveChartProps {
 }
 
 export default function PredictiveChartCard({ data, isLoading }: PredictiveChartProps) {
-  // Slider Controls
+  // State untuk mengontrol jumlah titik data historis yang digunakan untuk analisis.
   const [analyzePoints, setAnalyzePoints] = useState(20); 
+  // State untuk mengontrol durasi prediksi ke masa depan (dalam menit).
   const [predictMinutes, setPredictMinutes] = useState(60); 
 
-  // Jalankan rumus hanya saat data atau slider berubah
+  // Menggunakan `useMemo` untuk mengoptimalkan performa.
+  // Fungsi `getChartDataWithPrediction` hanya akan dijalankan kembali jika `data`, `analyzePoints`, atau `predictMinutes` berubah.
   const chartData = useMemo(() => {
-    const predictCount = Math.ceil(predictMinutes / 5); // Bagi 5 karena data masuk tiap 5 mnt
+    // Menghitung jumlah titik prediksi berdasarkan interval data (5 menit per titik).
+    const predictCount = Math.ceil(predictMinutes / 5);
     return getChartDataWithPrediction(data, ['ph', 'do'], analyzePoints, predictCount);
   }, [data, analyzePoints, predictMinutes]);
 
+  // Fungsi untuk memformat label sumbu X (timestamp) menjadi format jam:menit.
   const formatXAxis = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
-  // Tooltip Glassmorphism yang Tuan Muda suka
+  // Komponen kustom untuk tooltip grafik dengan efek visual glassmorphism.
   const PredictiveTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const pointData = payload[0].payload;
@@ -36,6 +49,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.55)',
             backdropFilter: 'blur(16px)',
+            // `WebkitBackdropFilter` untuk kompatibilitas dengan browser berbasis Webkit (Safari).
             WebkitBackdropFilter: 'blur(16px)',
             border: pointData.isPrediction ? '2px solid rgba(239, 68, 68, 0.8)' : '2px solid rgba(255, 255, 255, 0.8)',
             boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.15)'
@@ -46,9 +60,9 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
             {pointData.isPrediction && <span className="text-red-500 ml-3 bg-red-100 px-2 py-0.5 rounded-full text-[9px]">PREDICTION</span>}
           </p>
           
-          {/* Tampilkan pH */}
+          {/* Menampilkan nilai pH (aktual atau prediksi). */}
           {(pointData.ph_actual || pointData.ph_predicted) && (
-             <div className="flex items-center gap-3 mb-2"> {/* Tampilan pH */}
+             <div className="flex items-center gap-3 mb-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500 shadow-md border border-white/50" />
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                   pH: <span className="text-black dark:text-white text-base ml-1">{(pointData.ph_actual || pointData.ph_predicted).toFixed(2)}</span>
@@ -56,9 +70,9 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
              </div>
           )}
           
-          {/* Tampilkan DO */}
+          {/* Menampilkan nilai DO (aktual atau prediksi). */}
           {(pointData.do_actual || pointData.do_predicted) && (
-             <div className="flex items-center gap-3 mb-2"> {/* Tampilan DO */}
+             <div className="flex items-center gap-3 mb-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-md border border-white/50" />
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                   DO: <span className="text-black dark:text-white text-base ml-1">{(pointData.do_actual || pointData.do_predicted).toFixed(2)} mg/L</span>
@@ -82,9 +96,9 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
           <p className="text-xs text-slate-500 font-medium mt-1"></p>
         </div>
 
-        {/* Panel Kendali Slider */}
+        {/* Panel kontrol berisi slider untuk mengatur parameter prediksi. */}
         <div className="flex flex-col sm:flex-row gap-6 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex flex-col"> {/* Slider untuk menganalisis data masa lalu */}
+          <div className="flex flex-col">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
               Analisis Data Lalu: <span className="text-indigo-600">{analyzePoints} Titik</span>
             </label>
@@ -94,7 +108,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
               className="accent-indigo-600 w-32"
             />
           </div>
-          <div className="flex flex-col"> {/* Slider untuk memprediksi masa depan */}
+          <div className="flex flex-col">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
               Prediksi Masa Depan: <span className="text-emerald-600">{predictMinutes} Menit</span>
             </label>
@@ -108,7 +122,7 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
       </div>
 
       {isLoading ? (
-        // --- SKELETON LOADER UNTUK PREDICTIVE CHART ---
+        // Menampilkan skeleton loader saat data sedang dimuat.
         <div className="h-[350px] w-full bg-gray-50 dark:bg-slate-800/50 rounded-xl p-6 border border-dashed border-gray-300 dark:border-slate-600 animate-pulse">
           <div className="h-full w-full flex flex-col justify-between">
             <div className="w-full h-px bg-gray-300 dark:bg-slate-700"></div>
@@ -128,16 +142,16 @@ export default function PredictiveChartCard({ data, isLoading }: PredictiveChart
               <Tooltip content={<PredictiveTooltip />} />
               <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }} />
               
-              {/* Garis Batas Kritis DO */}
+              {/* Garis referensi untuk menandai ambang batas kritis nilai DO. */}
               <ReferenceLine y={4.0} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'Batas Kritis DO (4.0)', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
 
-              {/* Garis Masa Lalu (Solid) */}
-              <Line type="monotone" name="Historical pH" dataKey="ph_actual" stroke="#3b82f6" strokeWidth={3} dot={false} /> {/* pH aktual */}
-              <Line type="monotone" name="Historical DO" dataKey="do_actual" stroke="#10b981" strokeWidth={3} dot={false} /> {/* DO aktual */}
+              {/* Garis untuk data historis (aktual) dengan gaya solid. */}
+              <Line type="monotone" name="Historical pH" dataKey="ph_actual" stroke="#3b82f6" strokeWidth={3} dot={false} />
+              <Line type="monotone" name="Historical DO" dataKey="do_actual" stroke="#10b981" strokeWidth={3} dot={false} />
 
-              {/* Garis Masa Depan (Dashed / Putus-putus) */}
-              <Line type="monotone" name="Predicted pH" dataKey="ph_predicted" stroke="#3b82f6" strokeWidth={3} strokeDasharray="6 6" dot={false} /> {/* pH prediksi */}
-              <Line type="monotone" name="Predicted DO" dataKey="do_predicted" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false} /> {/* DO prediksi */}
+              {/* Garis untuk data prediksi dengan gaya putus-putus (dashed). */}
+              <Line type="monotone" name="Predicted pH" dataKey="ph_predicted" stroke="#3b82f6" strokeWidth={3} strokeDasharray="6 6" dot={false} />
+              <Line type="monotone" name="Predicted DO" dataKey="do_predicted" stroke="#10b981" strokeWidth={3} strokeDasharray="6 6" dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -1,3 +1,12 @@
+/*
+ * Project: WARAS_IoT
+ * Author: Gerrio Irfan Pratama (2026)
+ * 
+ * This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 
+ * International License (CC BY-NC 4.0).
+ * strictly NON-COMMERCIAL USE ONLY. 
+ * See the LICENSE file in the repository for full details.
+ */
 import React, { useState } from 'react';
 import { 
   getAuth, 
@@ -15,17 +24,22 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+  // State untuk beralih antara mode Login dan Register.
   const [isLoginMode, setIsLoginMode] = useState(true);
+  // State untuk menyimpan input email dan password dari pengguna.
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // State untuk menampilkan pesan error.
   const [error, setError] = useState('');
+  // State untuk menandakan proses otentikasi sedang berlangsung (menonaktifkan tombol).
   const [isLoading, setIsLoading] = useState(false);
 
+  // Jika modal tidak terbuka, jangan render apapun (null).
   if (!isOpen) return null;
 
   const auth = getAuth();
 
-  // --- Fungsi Form Email & Password ---
+  // Fungsi yang menangani submit form untuk login atau register dengan email/password.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -33,14 +47,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
     try {
       if (isLoginMode) {
-        // Mode Masuk (Login)
+        // Jika dalam mode login, panggil fungsi signInWithEmailAndPassword.
         await signInWithEmailAndPassword(auth, email, password);
       } else {
-        // Mode Daftar (Register)
+        // Jika dalam mode register, panggil fungsi createUserWithEmailAndPassword.
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      onSuccess(); // Tutup modal kalau sukses
+      onSuccess(); // Panggil callback onSuccess jika otentikasi berhasil.
     } catch (err: any) {
+      // Menangani berbagai jenis error dari Firebase Authentication.
       if (err.message.includes('auth/invalid-credential')) setError('Incorrect email or password.');
       else if (err.message.includes('auth/email-already-in-use')) setError('Email is already in use.');
       else if (err.message.includes('auth/weak-password')) setError('Password must be at least 6 characters.');
@@ -50,7 +65,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     }
   };
 
-  // --- Fungsi Tombol Google (Otomatis Daftar / Login) ---
+  // Fungsi yang menangani proses login atau register menggunakan akun Google.
   const handleGoogleLogin = async () => {
     setError('');
     setIsLoading(true);
@@ -58,8 +73,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
     try {
       await signInWithPopup(auth, provider);
-      onSuccess(); // Langsung masuk/daftar tanpa ba-bi-bu
+      onSuccess(); // Panggil callback onSuccess jika berhasil.
     } catch (err: any) {
+      // Menangani error spesifik jika pengguna menutup pop-up Google.
       if (err.code === 'auth/popup-closed-by-user') {
         setError('Google sign-in was canceled.');
       } else {
@@ -74,6 +90,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md border border-indigo-100 dark:border-slate-700 relative overflow-hidden">
         
+        {/* Tombol untuk menutup modal. */}
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
@@ -82,6 +99,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         </button>
 
         <div className="p-8">
+          {/* Judul modal yang berubah sesuai mode (Login/Register). */}
           <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">
             {isLoginMode ? 'Access Control' : 'Create New Account'}
           </h2>
@@ -91,13 +109,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               : 'Register an account to monitor and control the system.'}
           </p>
 
+          {/* Area untuk menampilkan pesan error jika ada. */}
           {error && (
             <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg text-sm text-red-600 dark:text-red-400 font-bold">
               {error}
             </div>
           )}
 
-          {/* Form Email & Password */}
+          {/* Form utama untuk input email dan password. */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wide">Email</label>
@@ -123,6 +142,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               />
             </div>
 
+            {/* Tombol submit form. */}
             <button 
               type="submit" 
               disabled={isLoading}
@@ -132,14 +152,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             </button>
           </form>
 
-          {/* Pemisah Garis (ATAU) */}
+          {/* Pemisah visual antara metode login. */}
           <div className="mt-6 flex items-center justify-center space-x-4">
             <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
             <span className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">OR</span>
             <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
           </div>
 
-          {/* Tombol Google */}
+          {/* Tombol untuk memicu login dengan Google. */}
           <button 
             type="button"
             onClick={handleGoogleLogin}
@@ -155,10 +175,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             Continue with Google
           </button>
 
+          {/* Tautan untuk beralih antara mode Login dan Register. */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               {isLoginMode ? "Don't have an account? " : "Already have an account? "}
               <button 
+                // Saat diklik, ubah mode dan reset pesan error.
                 onClick={() => {
                   setIsLoginMode(!isLoginMode);
                   setError('');

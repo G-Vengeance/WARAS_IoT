@@ -1,11 +1,20 @@
+/*
+ * Project: WARAS_IoT
+ * Author: Gerrio Irfan Pratama (2026)
+ * 
+ * This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 
+ * International License (CC BY-NC 4.0).
+ * strictly NON-COMMERCIAL USE ONLY. 
+ * See the LICENSE file in the repository for full details.
+ */
 import React, { useEffect, useState, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush
 } from 'recharts';
 import { HistoricalDataPoint } from '@/lib/types';
 import { getDatabase, ref, get } from 'firebase/database';
-import { useAuth } from '@/lib/hooks'; // 👇 Import hook otentikasi
-import AuthModal from './AuthModal'; // 👇 Import pop-up login
+import { useAuth } from '@/lib/hooks'; 
+import AuthModal from './AuthModal'; 
 
 interface ChartCardProps {
   data: HistoricalDataPoint[];
@@ -19,21 +28,26 @@ interface ChartCardProps {
 }
 
 export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCardProps) {
-  // 👇 State untuk proteksi Export 👇
+  // Menggunakan hook `useAuth` untuk memeriksa status otentikasi pengguna.
   const { user } = useAuth();
+  // State untuk mengontrol visibilitas modal otentikasi.
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
+  // State untuk mengelola domain zoom pada grafik.
   const [zoomDomain, setZoomDomain] = useState({ start: 0, end: 100 });
   const chartRef = useRef<HTMLDivElement>(null);
 
+  // State untuk menandakan proses ekspor data sedang berlangsung.
   const [isExporting, setIsExporting] = useState(false);
   
+  // State untuk menyimpan tanggal yang dipilih untuk ekspor data.
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   });
 
   useEffect(() => {
+    // Mengatur domain zoom awal saat data pertama kali dimuat.
     if (data && data.length > 0) {
       setZoomDomain({ start: 0, end: data.length - 1 });
     }
@@ -43,6 +57,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     const el = chartRef.current;
     if (!el || data.length === 0) return;
 
+    // Menambahkan event listener untuk fungsionalitas zoom dengan roda mouse.
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault(); 
       setZoomDomain(prev => {
@@ -65,6 +80,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     return () => el.removeEventListener('wheel', handleWheel);
   }, [data.length]);
 
+  // Fungsi untuk memformat label sumbu X (timestamp) menjadi format tanggal dan waktu.
   const formatXAxis = (timestamp: number) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
@@ -73,6 +89,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     return `${dayMonth}, ${time}`;
   };
 
+  // Fungsi untuk memformat label sumbu Y, menambahkan unit '°C' untuk suhu.
   const formatYAxis = (value: number) => {
     const titleLower = title.toLowerCase();
     if (titleLower.includes("suhu") || titleLower.includes("temp")) {
@@ -81,19 +98,21 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     return value.toString(); 
   };
 
-  // 👇 FUNGSI PELINDUNG EXPORT 👇
+  // Fungsi pembungkus (wrapper) untuk aksi ekspor yang memerlukan otentikasi.
+  // Jika pengguna belum login, tampilkan modal otentikasi.
   const handleProtectedExport = (format: 'csv' | 'xml') => {
     if (!user) {
-      setIsAuthModalOpen(true); // Munculkan form login kalau belum punya akses
+      setIsAuthModalOpen(true); 
     } else {
-      handleExportHarian(format); // Lanjut download kalau sudah login
+      handleExportHarian(format); 
     }
   };
 
+  // Fungsi utama untuk menangani logika ekspor data harian.
   const handleExportHarian = async (format: 'csv' | 'xml') => {
     if (!selectedDate) return alert("Please select a date first!");
     
-    setIsExporting(true); // Mengatur status loading untuk tombol export
+    setIsExporting(true); 
     
     const targetMonthFolder = selectedDate.substring(0, 7);
     const db = getDatabase();
@@ -103,7 +122,8 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
       const snapshot = await get(dataRef);
       if (snapshot.exists()) {
         const firebaseData = snapshot.val();
-        
+        // Memfilter data dari Firebase untuk hanya menyertakan data pada tanggal yang dipilih.
+        // Mengatasi masalah zona waktu dengan mengonversi ke string ISO lokal.
         const filteredDataArray = Object.values(firebaseData)
           .filter((d: any) => {
             if (!d.timestamp) return false;
@@ -112,6 +132,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
                                   .toISOString().split('T')[0];
             return localDateStr === selectedDate;
           })
+          // Mengurutkan data berdasarkan timestamp.
           .sort((a: any, b: any) => a.timestamp - b.timestamp);
         
         if (filteredDataArray.length > 0) {
@@ -131,6 +152,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     }
   };
 
+  // Fungsi untuk menghasilkan file CSV dari data yang telah difilter.
   const generateCSV = (dataArray: any[], dateString: string) => {
     const headers = ['Timestamp', 'Full Time', ...dataKeys.map(k => k.name)].join(',');
     const csvRows = dataArray.map(row => {
@@ -145,6 +167,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     triggerDownload(url, `Data_${title.replace(/\s+/g, '_')}_${dateString}.csv`, true);
   };
 
+  // Fungsi untuk menghasilkan file XML dari data yang telah difilter.
   const generateXML = (dataArray: any[], dateString: string) => {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<HistoricalData>\n';
     dataArray.forEach(row => {
@@ -163,6 +186,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     triggerDownload(url, `Data_${title.replace(/\s+/g, '_')}_${dateString}.xml`, true);
   };
 
+  // Fungsi utilitas untuk memicu unduhan file di browser.
   const triggerDownload = (uri: string, filename: string, isUrl = false) => {
     const link = document.createElement('a');
     link.href = isUrl ? uri : encodeURI(uri);
@@ -172,6 +196,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     document.body.removeChild(link);
   };
 
+  // Komponen kustom untuk tooltip yang muncul saat hover di atas grafik.
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const pointData = payload[0].payload;
@@ -206,7 +231,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
     return null;
   };
 
-  // 👇 Bungkus return utama dengan fragment <> ... </> agar bisa naruh Modal di bawah
+  // Menggunakan React Fragment (<>) untuk memungkinkan penempatan AuthModal di luar div utama.
   return (
     <>
       <div className="bg-gradient-to-br from-indigo-50/50 to-white dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg border border-indigo-100 dark:border-indigo-900/50 p-6 transition-all duration-300">
@@ -229,7 +254,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
               className="text-xs font-semibold px-2 py-1.5 border rounded-lg bg-white/50 dark:bg-slate-700 dark:text-white dark:border-slate-600 outline-none focus:ring-2 focus:ring-blue-500"
               title="Select Export Date"
             />
-            {/* 👇 Ubah onClick menjadi handleProtectedExport 👇 */}
+            {/* Tombol ekspor yang memanggil fungsi yang dilindungi otentikasi. */}
             <button 
               onClick={() => handleProtectedExport('csv')}
               disabled={isExporting}
@@ -248,7 +273,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
         </div>
         
         {isLoading ? (
-          // --- SKELETON LOADER DENGAN ANIMASI BERJALAN (PULSE) ---
+          // Menampilkan skeleton loader saat data sedang dimuat.
           <div className="h-80 w-full bg-gray-50 dark:bg-slate-800/50 rounded-xl p-6 border border-dashed border-gray-300 dark:border-slate-600 animate-pulse">
             <div className="h-full w-full flex flex-col justify-between">
               <div className="w-full h-px bg-gray-300 dark:bg-slate-700"></div>
@@ -258,12 +283,14 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
               <div className="w-full h-px bg-gray-300 dark:bg-slate-700"></div>
             </div>
           </div>
+        // Menampilkan pesan jika tidak ada data historis yang tersedia.
         ) : data.length === 0 ? (
             <div className="h-80 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-slate-600">
-              <div className="animate-bounce mb-3 text-3xl">📊</div> {/* Ikon animasi */}
+              <div className="animate-bounce mb-3 text-3xl">📊</div>
               <p className="text-sm font-medium">Belum ada data historis yang terekam.</p>
             </div>
         ) : (
+          // Kontainer utama untuk grafik. `chartRef` digunakan untuk event listener zoom.
           <div ref={chartRef} className="cursor-crosshair">
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
@@ -283,6 +310,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
                   className="text-gray-500 dark:text-slate-400"
                   tick={{ fontSize: 11, fontWeight: 500 }}
                   tickLine={false}
+                  // Mengatur domain sumbu Y secara dinamis untuk memberikan sedikit padding.
                   axisLine={false}
                   domain={[
                     (dataMin: number) => Number((dataMin - 0.5).toFixed(1)),
@@ -297,6 +325,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
                   wrapperStyle={{ paddingTop: '20px', paddingBottom: '10px', fontSize: '13px', fontWeight: 'bold', color: 'inherit' }} 
                 />
                 
+                {/* Merender setiap garis (Line) pada grafik berdasarkan `dataKeys` yang diberikan. */}
                 {dataKeys.map((item) => (
                   <Line
                     key={item.key}
@@ -311,6 +340,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
                   />
                 ))}
 
+                {/* Komponen Brush untuk navigasi dan pemilihan rentang data. */}
                 <Brush 
                   dataKey="timestamp" 
                   height={35} 
@@ -333,7 +363,7 @@ export default function ChartCard({ data, title, dataKeys, isLoading }: ChartCar
 
       </div>
 
-      {/* 👇 Pasang AuthModal di luar container Card 👇 */}
+      {/* Modal otentikasi yang akan ditampilkan jika diperlukan. */}
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 

@@ -11,6 +11,12 @@
 
 ---
 
+## ⚖️ License & Copyright
+**© 2026 Gerrio Irfan Pratama**
+
+This project is strictly for educational, research, and personal use. It is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/). 
+**Commercial use, including selling the software, hardware design, or integrating it into a commercial product, is strictly prohibited without explicit permission.**
+
 ## 📖 Latar Belakang Proyek
 
 **WARAS (Water-Quality Realtime Analyzing System)** merupakan sebuah solusi berbasis web yang dibangun untuk menjawab tantangan dalam akuakultur modern. Dasbor ini menyajikan antarmuka yang intuitif untuk melakukan pemantauan parameter krusial kualitas air, seperti **pH**, **Oksigen Terlarut (DO)**, dan **suhu**, yang diterima secara langsung dari sensor IoT.
@@ -141,5 +147,4 @@ waras-iot-dashboard/
 Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
 
 ---
-
-Dibuat dengan ❤️ untuk kemajuan akuakultur Indonesia.
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-red.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
